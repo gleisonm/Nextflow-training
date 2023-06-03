@@ -48,15 +48,19 @@ include { INPUT_CHECK } from '../subworkflows/local/input_check'
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC                      } from '../modules/nf-core/fastqc/main'
-include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
+include { FASTQC                          } from '../modules/nf-core/fastqc/main'
+include { MULTIQC                         } from '../modules/nf-core/multiqc/main'
+include { FASTP                           } from '../modules/nf-core/fastp/main'
+include { BOWTIE2_BUILD                   } from '../modules/nf-core/bowtie2/build/main'
+include { BOWTIE2_ALIGN                   } from '../modules/nf-core/bowtie2/align/main'
+include { CUSTOM_DUMPSOFTWAREVERSIONS     } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
 
 // Info required for completion email and summary
 def multiqc_report = []
@@ -107,6 +111,25 @@ workflow METAMINE {
         ch_multiqc_logo.toList()
     )
     multiqc_report = MULTIQC.out.report.toList()
+
+    // Bowtie2 index for hospeder decontamination
+
+
+    BOWTIE2_BUILD(
+        Channel.fromPath(params.genoma_hospeder)
+    )
+
+    //
+    // Bowtie2 Align against hospeder
+    //
+
+    BOWTIE2_ALIGN(
+        //params.fasta_path, //reads_path
+        Channel.of([sample_id: 'sample', 'params.fasta_path']), //reads_path
+        Channel.fromPath("$projectDir/bowtie2/*.ebtw"),
+        save_unaligned:true,
+        sort_bam:true
+    )
 }
 
 /*
