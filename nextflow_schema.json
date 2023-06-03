@@ -283,5 +283,47 @@
         {
             "$ref": "#/definitions/generic_options"
         }
-    ]
+    ],
+    "properties": {
+        "save_reference": {
+            "type": "string",
+            "default": "false"
+        },
+        "split_fastq": {
+            "type": "string",
+            "default": "false"
+        },
+        "fastq_chunks_size": {
+            "type": "integer",
+            "default": 20000000
+        },
+        "save_interaction_bam": {
+            "type": "string",
+            "default": "false"
+        },
+        "save_aligned_intermediates": {
+            "type": "string",
+            "default": "false"
+        },
+        "bwt2_opts_end2end": {
+            "type": "string",
+            "default": "--very-sensitive -L 30 --score-min L,-0.6,-0.2 --end-to-end --reorder"
+        },
+        "bwt2_opts_trimmed": {
+            "type": "string",
+            "default": "--very-sensitive -L 20 --score-min L,-0.6,-0.2 --end-to-end --reorder"
+        },
+        "keep_dups": {
+            "type": "string",
+            "default": "false"
+        },
+        "keep_multi": {
+            "type": "string",
+            "default": "false"
+        },
+        "min_mapq": {
+            "type": "integer",
+            "default": 10
+        }
+    }
 }
